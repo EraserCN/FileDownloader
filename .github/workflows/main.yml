@@ -1,0 +1,30 @@
+name: Firmware Downloader
+
+on:
+  workflow_dispatch: # 允许手动点击按钮触发
+
+jobs:
+  download_and_upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download File from OnePlus
+        run: |
+          # 使用 wget 下载，GitHub 服务器带宽通常在 100MB/s 以上
+          wget -O firmware.zip "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0300-1010_patch_o2ZAY3_01000100.zip"
+
+      - name: Upload to Transfer.sh (Temporary Link)
+        run: |
+          # 将下载好的文件上传到 transfer.sh，它会返回一个下载链接
+          echo "Uploading to transfer.sh..."
+          curl --upload-file ./firmware.zip https://transfer.sh/firmware.zip > download_link.txt
+          echo "Your download link is: $(cat download_link.txt)"
+
+      - name: Upload to GitHub Artifacts (Alternative)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oneplus-Firmware
+          path: firmware.zip
+          retention-days: 1 # 节省空间，保留1天
