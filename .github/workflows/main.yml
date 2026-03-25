@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Starting download..."
           # 使用 wget 下载，增加重试机制
-          wget -c -t 10 "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0300-1010_patch_o2ZAY3_01000100.zip" -O firmware.zip
+          wget -c -t 10 "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0270-1010_patch_UOJKdI_01000100.zip" -O firmware.zip
           echo "Download complete."
 
       - name: Calculate Original SHA256
