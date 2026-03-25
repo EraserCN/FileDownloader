@@ -1,27 +1,52 @@
-name: Firmware Downloader Ultra
+name: OnePlus Firmware Downloader Pro
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # 支持手动点击运行
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: # 赋予创建 Release 的权限
-      contents: write
+    permissions:
+      contents: write # 必须赋予权限才能创建 Release
     steps:
-      - name: Download Firmware
-        run: |
-          # 加上 -c 支持断点，-t 重试
-          wget -c -t 10 "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0300-1010_patch_o2ZAY3_01000100.zip" -O firmware.zip
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Calculate MD5 (可选校验)
-        run: md5sum firmware.zip
+      - name: Download Firmware from OnePlus
+        run: |
+          echo "Starting download..."
+          # 使用 wget 下载，增加重试机制
+          wget -c -t 10 "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0300-1010_patch_o2ZAY3_01000100.zip" -O firmware.zip
+          echo "Download complete."
+
+      - name: Calculate Original SHA256
+        run: |
+          # 记录原始文件的哈希值，方便你下载后对比
+          sha256sum firmware.zip > sha256.txt
+          cat sha256.txt
+
+      - name: Split File into 1.5GB Chunks
+        run: |
+          # 针对 2.6GB 文件，切分为 firmware.zip.aa 和 firmware.zip.ab
+          # 避免触发 GitHub Release 2GB 的上传限制
+          split -b 1500M firmware.zip firmware.zip.
+          ls -lh firmware.zip.*
 
       - name: Create Release and Upload
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: OnePlus Firmware Download
-          files: firmware.zip
+          tag_name: v3.0.${{ github.run_number }}
+          name: OnePlus Firmware (2.6GB Split Pack)
+          body: |
+            ### 下载说明
+            由于文件超过 2GB，已切分为两个分卷。
+            请下载 **firmware.zip.aa** 和 **firmware.zip.ab** 后手动合并。
+            
+            **原始文件 SHA256:**
+            $(cat sha256.txt)
+          files: |
+            firmware.zip.aa
+            firmware.zip.ab
+            sha256.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
