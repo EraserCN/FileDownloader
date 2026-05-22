@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Starting download..."
           # 使用 wget 下载，增加重试机制
-          wget -c -t 10 "https://oxygenos.oneplus.com/CPH2747_11_C_OTA_0270-1010_patch_UOJKdI_01000100.zip" -O firmware.zip
+          wget -c -t 10 "https://gauss-compota-c-sg.allawnofs.com/remove-ee6404c5da6de3f22189e3b485ae77af/g-10eab6008d5642cf42abd2aa41f847cb/component-ota/26/05/11/89940c15fa9a420b8aa3fe59966c137f.zip?sign=916d06f752de4f0e019797118dadd92d&t=6a0fc081&x-oss-signature=46juGPDZ5jzXq5Ya2W%2FKG2rRf16G55iMA%2FLsAxfYHzw%3D&x-oss-signature-version=OSS2&x-oss-expires=1779419017&x-oss-access-key-id=LTAI5t7LQqPWs3796pRv6Avx" -O firmware.zip
           echo "Download complete."
 
       - name: Calculate Original SHA256
